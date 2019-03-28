@@ -24,10 +24,10 @@ class Gateway extends AbstractGateway
      */
     public function getDefaultParameters()
     {
-        return array(
+        return [
             'merchantCode' => '',
             'authenticationCode' => ''
-        );
+        ];
     }
 
     /**
@@ -57,17 +57,17 @@ class Gateway extends AbstractGateway
         return $this->setParameter('authenticationCode', $value);
     }
 
-    public function purchase(array $parameters = array())
+    public function purchase(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\Poli\Message\PurchaseRequest', $parameters);
     }
 
-    public function completePurchase(array $parameters = array())
+    public function completePurchase(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\Poli\Message\CompletePurchaseRequest', $parameters);
     }
 
-    public function fetchCheckout(array $parameters = array())
+    public function fetchCheckout(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\Poli\Message\FetchCheckoutRequest', $parameters);
     }

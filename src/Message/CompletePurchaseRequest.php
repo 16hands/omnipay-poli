@@ -8,12 +8,11 @@ use Omnipay\Common\Exception\InvalidResponseException;
 
 /**
  * Poli Complete Purchase Request
- * 
+ *
  * @link http://www.polipaymentdeveloper.com/doku.php?id=gettransaction
  */
 class CompletePurchaseRequest extends PurchaseRequest
 {
-    //protected $endpoint = "https://publicapi.apac.paywithpoli.com/api/Transaction/GetTransaction";
     protected $endpoint = 'https://poliapi.apac.paywithpoli.com/api/v2/Transaction/GetTransaction';
 
     public function getData()
@@ -25,22 +24,22 @@ class CompletePurchaseRequest extends PurchaseRequest
 
         $token = $this->getToken();
 
-        if (!$token) {
+        if (! $token) {
             $token = $this->httpRequest->query->get('token');
         }
 
-        if (!$token) {
+        if (! $token) {
             //this may be a POST nudge request, so look for the token there
             $token = $this->httpRequest->request->get('Token');
         }
 
-        if (!$token) {
+        if (! $token) {
             throw new InvalidRequestException('Transaction token is missing');
         }
-        $data = array();
-        $data['token'] = $token;
-        
-        return $data;
+
+        return [
+            'token' => $token
+        ];
     }
 
     public function send()
@@ -50,12 +49,18 @@ class CompletePurchaseRequest extends PurchaseRequest
 
     public function sendData($data)
     {
-        $request = $this->httpClient->get($this->endpoint)
-            ->setAuth($this->getMerchantCode(), $this->getAuthenticationCode());
-        $request->getQuery()->replace($data);
-        $httpResponse = $request->send();
+        $query = http_build_query($data);
+        $url = $this->endpoint.'?'.$query;
 
-        return $this->response = new CompletePurchaseResponse($this, $httpResponse->getBody());
+        $merchantCode = $this->getMerchantCode();
+        $authenticationCode = $this->getAuthenticationCode();
+        $auth = base64_encode($merchantCode.":".$authenticationCode);
+
+        $response = $this->httpClient->request('GET', $url, [
+            'Authorization' => 'Basic '.$auth,
+        ]);
+
+        return $this->response = new CompletePurchaseResponse($this, $response->getBody());
     }
 
     public function getToken()

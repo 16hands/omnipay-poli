@@ -7,6 +7,7 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\RedirectResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Poli Checkout Response
@@ -17,13 +18,11 @@ class FetchCheckoutResponse extends AbstractResponse implements RedirectResponse
     /**
      *
      * @param RequestInterface $request
-     * @param string $data
-     * @throws InvalidResponseException
+     * @param StreamInterface $data
      */
     public function __construct(RequestInterface $request, $data)
     {
-        $this->request = $request;
-        $this->data = json_decode($data, true);
+        parent::__construct($request, json_decode($data, true));
     }
 
     /**
@@ -33,7 +32,7 @@ class FetchCheckoutResponse extends AbstractResponse implements RedirectResponse
      */
     public function isSuccessful()
     {
-        return !$this->getCode();
+        return ! $this->getCode();
     }
 
     /**

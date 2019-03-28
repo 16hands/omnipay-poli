@@ -1,4 +1,5 @@
 <?php
+
 namespace Omnipay\Poli;
 
 use Omnipay\Common\CreditCard;
@@ -11,6 +12,7 @@ class GatewayTest extends GatewayTestCase
     public function setUp()
     {
         parent::setUp();
+
         $this->gateway = new Gateway($this->getHttpClient(), $this->getHttpRequest());
 
         $this->gateway->setMerchantCode('ABCXYZ');
@@ -18,10 +20,10 @@ class GatewayTest extends GatewayTestCase
     }
 
     public function testPurchaseSuccess()
-    {     
+    {
         $this->setMockHttpResponse('PurchaseRequestSuccess.txt');
 
-        $response = $this->gateway->purchase(array(
+        $response = $this->gateway->purchase([
             'amount' => '10.00',
             'currency' => 'NZD',
             'card' => $this->getValidCard(),
@@ -29,7 +31,7 @@ class GatewayTest extends GatewayTestCase
             'returnUrl' => 'http://www.mytest.co.nz/shop/completepayment',
             'notifyUrl' => 'http://www.mytest.co.nz/shop/notifypayment',
             'cancelUrl' => 'http://www.mytest.co.nz/shop/cancelpayment'
-        ))->send();
+        ])->send();
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($response->isRedirect());
@@ -46,7 +48,7 @@ class GatewayTest extends GatewayTestCase
         $this->setMockHttpResponse('PurchaseRequestFailure.txt');
 
         try {
-            $response = $this->gateway->purchase(array(
+            $response = $this->gateway->purchase([
                 'amount' => '-12345.00',
                 'currency' => 'NZD',
                 'card' => $this->getValidCard(),
@@ -54,7 +56,7 @@ class GatewayTest extends GatewayTestCase
                 'returnUrl' => 'http://www.mytest.co.nz/shop/completepayment',
                 'notifyUrl' => 'http://www.mytest.co.nz/shop/notifypayment',
                 'cancelUrl' => 'http://www.mytest.co.nz/shop/cancelpayment'
-            ))->send();
+            ])->send();
             $this->assertFalse(true, 'Expecting an InvalidRequestException');
         } catch (InvalidRequestException $ire) {
             $this->assertEquals('A negative amount is not allowed.', $ire->getMessage());
@@ -68,9 +70,9 @@ class GatewayTest extends GatewayTestCase
     public function testCompletePurchaseSuccess()
     {
         //set mock GET data
-        $this->getHttpRequest()->query->replace(array(
+        $this->getHttpRequest()->query->replace([
             'token' => '5lvIbQXpE7Og7yZcir2HJgYxvSsfarVc'
-        ));
+        ]);
         $this->setMockHttpResponse('CompletePurchaseRequestSuccess.txt');
         $response = $this->gateway->completePurchase()->send();
 
@@ -83,9 +85,9 @@ class GatewayTest extends GatewayTestCase
     public function testNotifyCompletePurchaseSuccess()
     {
         //set mock POST data
-        $this->getHttpRequest()->request->replace(array(
+        $this->getHttpRequest()->request->replace([
             'Token' => '5lvIbQXpE7Og7yZcir2HJgYxvSsfarVc'
-        ));
+        ]);
         $this->setMockHttpResponse('CompletePurchaseRequestSuccess.txt');
         $response = $this->gateway->completePurchase()->send();
 

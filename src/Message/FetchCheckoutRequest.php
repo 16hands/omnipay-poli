@@ -34,14 +34,13 @@ class FetchCheckoutRequest extends AbstractRequest
             'merchantCode',
             'authenticationCode'
         );
-        $data = array();
-        return $data;
+
+        return [];
     }
 
     public function send()
     {
-        $data = $this->getData();
-        return $this->sendData($data);
+        return $this->sendData($this->getData());
     }
 
     public function sendData($data)
@@ -51,17 +50,13 @@ class FetchCheckoutRequest extends AbstractRequest
 
         $merchantCode = $this->getMerchantCode();
         $authenticationCode = $this->getAuthenticationCode();
-        $auth = base64_encode($merchantCode.":".$authenticationCode); //'S61xxxxx:AuthCode123');
+        $auth = base64_encode($merchantCode.":".$authenticationCode);
 
-        $httpRequest = $this->httpClient->get(
-            $url,
-            array(
-                'Content-Type'=>'application/json',
-                'Authorization' => 'Basic '.$auth,
-            )
-        );
-        $httpResponse = $httpRequest->send();
-        return $this->response = new FetchCheckoutResponse($this, $httpResponse->getBody(true));
+        $httpResponse = $this->httpClient->request('GET', $url, [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Basic '.$auth,
+        ]);
 
+        return $this->response = new FetchCheckoutResponse($this, $httpResponse->getBody());
     }
 }

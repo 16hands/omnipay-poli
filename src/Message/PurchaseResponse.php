@@ -2,12 +2,9 @@
 
 namespace Omnipay\Poli\Message;
 
-use DOMDocument;
-use Guzzle\Http\EntityBody;
-use SimpleXMLElement;
+use Psr\Http\Message\StreamInterface;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\RedirectResponseInterface;
 
 /**
@@ -19,13 +16,11 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      * PurchaseResponse constructor.
      *
      * @param RequestInterface $request
-     * @param EntityBody $data
-     * @throws InvalidResponseException
+     * @param StreamInterface $data
      */
     public function __construct(RequestInterface $request, $data)
     {
-        $this->request = $request;
-        $this->data = json_decode($data, true);
+        parent::__construct($request, json_decode($data, true));
     }
 
     /**
