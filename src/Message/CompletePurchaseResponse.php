@@ -11,7 +11,6 @@ use Omnipay\Common\Exception\InvalidResponseException;
  */
 class CompletePurchaseResponse extends AbstractResponse
 {
-
     /**
      * CompletePurchaseResponse constructor.
      *

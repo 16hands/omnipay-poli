@@ -87,10 +87,10 @@ class Gateway extends AbstractGateway
     /**
      * @link https://www.polipayments.com/GetTransaction
      * @param array $parameters
-     * @return \Omnipay\Common\Message\AbstractRequest|Message\FetchPurchaseRequest
+     * @return \Omnipay\Common\Message\AbstractRequest|Message\CompletePurchaseRequest
      */
     public function fetchPurchase(array $parameters = [])
     {
-        return $this->createRequest('\Omnipay\Poli\Message\FetchPurchaseRequest', $parameters);
+        return $this->completePurchase($parameters);
     }
 }

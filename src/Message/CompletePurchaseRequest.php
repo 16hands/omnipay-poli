@@ -61,7 +61,7 @@ class CompletePurchaseRequest extends AbstractRequest
      */
     public function getToken()
     {
-        return $this->getParameter('token');
+        return $this->getParameter('token') ?? $this->getParameter('transactionReference');
     }
 
     /**
