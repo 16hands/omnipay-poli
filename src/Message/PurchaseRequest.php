@@ -2,37 +2,19 @@
 
 namespace Omnipay\Poli\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
-
 /**
  * Poli Purchase Request
  *
- * @link http://www.polipaymentdeveloper.com/doku.php?id=initiate
+ * @link https://www.polipayments.com/InitiateTransaction
  */
 class PurchaseRequest extends AbstractRequest
 {
     protected $endpoint = 'https://poliapi.apac.paywithpoli.com/api/v2/Transaction/Initiate';
 
-    public function getMerchantCode()
-    {
-        return $this->getParameter('merchantCode');
-    }
-
-    public function setMerchantCode($value)
-    {
-        return $this->setParameter('merchantCode', $value);
-    }
-
-    public function getAuthenticationCode()
-    {
-        return $this->getParameter('authenticationCode');
-    }
-
-    public function setAuthenticationCode($value)
-    {
-        return $this->setParameter('authenticationCode', $value);
-    }
-
+    /**
+     * @return array
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
+     */
     public function getData()
     {
         $this->validate(
@@ -67,6 +49,7 @@ class PurchaseRequest extends AbstractRequest
 
     /**
      * Generate reference data
+     *
      * @link http://www.polipaymentdeveloper.com/doku.php?id=nzreconciliation
      */
     public function getCombinedMerchantRef()
@@ -93,28 +76,15 @@ class PurchaseRequest extends AbstractRequest
         return substr($field, 0, 12);
     }
 
-    public function send()
+    /**
+     * Map a response into the appropriate class.
+     *
+     * @param array $data
+     * @param $statusCode
+     * @return \Omnipay\Common\Message\ResponseInterface|PurchaseResponse
+     */
+    protected function createResponse($data, $statusCode)
     {
-        return $this->sendData($this->getData());
-    }
-
-    public function sendData($data)
-    {
-        $merchantCode = $this->getMerchantCode();
-        $authenticationCode = $this->getAuthenticationCode();
-        $auth = base64_encode($merchantCode.":".$authenticationCode);
-
-        unset($data['MerchantCode'], $data['AuthenticationCode']);
-
-        $httpResponse = $this->httpClient->request('POST',
-            $this->endpoint,
-            [
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Basic '.$auth,
-            ],
-            json_encode($data)
-        );
-
-        return $this->response = new PurchaseResponse($this, $httpResponse->getBody());
+        return new PurchaseResponse($this, $data);
     }
 }

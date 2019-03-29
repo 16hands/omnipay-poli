@@ -2,10 +2,8 @@
 
 namespace Omnipay\Poli\Message;
 
-use Guzzle\Http\EntityBodyInterface;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
-use Omnipay\Common\Exception\InvalidResponseException;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -13,16 +11,16 @@ use Psr\Http\Message\StreamInterface;
  * Poli Checkout Response
  *
  */
-class FetchCheckoutResponse extends AbstractResponse implements RedirectResponseInterface
+class FetchPurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
     /**
      *
      * @param RequestInterface $request
-     * @param StreamInterface $data
+     * @param array $data
      */
     public function __construct(RequestInterface $request, $data)
     {
-        parent::__construct($request, json_decode($data, true));
+        parent::__construct($request, $data);
     }
 
     /**

@@ -16,11 +16,11 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
      * PurchaseResponse constructor.
      *
      * @param RequestInterface $request
-     * @param StreamInterface $data
+     * @param array $data
      */
     public function __construct(RequestInterface $request, $data)
     {
-        parent::__construct($request, json_decode($data, true));
+        parent::__construct($request, $data);
     }
 
     /**

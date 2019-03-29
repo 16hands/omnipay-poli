@@ -12,40 +12,57 @@ use Omnipay\Common\Exception\InvalidResponseException;
 class CompletePurchaseResponse extends AbstractResponse
 {
 
+    /**
+     * CompletePurchaseResponse constructor.
+     *
+     * @param RequestInterface $request
+     * @param array $data
+     * @throws InvalidResponseException
+     */
     public function __construct(RequestInterface $request, $data)
     {
-        $data = json_decode($data);
-
-        if (! $data || ! $data->TransactionRefNo) {
+        if (! isset($data['TransactionRefNo'])) {
             throw new InvalidResponseException;
         }
 
-        $this->data = $data;
+        parent::__construct($request, $data);
     }
 
+    /**
+     * @return bool
+     */
     public function isSuccessful()
     {
-        return ! $this->getCode() && $this->data->TransactionStatusCode === "Completed";
+        return ! $this->getCode() && $this->data['TransactionStatusCode'] === "Completed";
     }
 
+    /**
+     * @return string|null
+     */
     public function getTransactionReference()
     {
-        if ($this->data->TransactionRefNo) {
-            return $this->data->TransactionRefNo;
+        if ($this->data['TransactionRefNo']) {
+            return $this->data['TransactionRefNo'];
         }
     }
 
+    /**
+     * @return string|null
+     */
     public function getCode()
     {
-        if ($this->data->ErrorCode) {
-            return $this->data->ErrorCode;
+        if ($this->data['ErrorCode']) {
+            return $this->data['ErrorCode'];
         }
     }
 
+    /**
+     * @return string|null
+     */
     public function getMessage()
     {
-        if ($this->data->ErrorMessage) {
-            return $this->data->ErrorMessage;
+        if ($this->data['ErrorMessage']) {
+            return $this->data['ErrorMessage'];
         }
     }
 }

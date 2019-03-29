@@ -57,18 +57,40 @@ class Gateway extends AbstractGateway
         return $this->setParameter('authenticationCode', $value);
     }
 
+    /**
+     * Create a purchase request.
+     *
+     * The InitiateTransaction web service is used to initiate a POLi transaction
+     * with details specified by the merchant. POLi will authenticate
+     * the merchant's request and validate the data passed.
+     *
+     * @link https://www.polipayments.com/InitiateTransaction
+     * @param array $parameters
+     * @return \Omnipay\Common\Message\AbstractRequest|Message\PurchaseRequest
+     */
     public function purchase(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\Poli\Message\PurchaseRequest', $parameters);
     }
 
+    /**
+     *
+     * @link https://www.polipayments.com/GetTransaction
+     * @param array $parameters
+     * @return \Omnipay\Common\Message\AbstractRequest|Message\CompletePurchaseRequest
+     */
     public function completePurchase(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\Poli\Message\CompletePurchaseRequest', $parameters);
     }
 
+    /**
+     * @link https://www.polipayments.com/GetTransaction
+     * @param array $parameters
+     * @return \Omnipay\Common\Message\AbstractRequest|Message\FetchPurchaseRequest
+     */
     public function fetchCheckout(array $parameters = [])
     {
-        return $this->createRequest('\Omnipay\Poli\Message\FetchCheckoutRequest', $parameters);
+        return $this->createRequest('\Omnipay\Poli\Message\FetchPurchaseRequest', $parameters);
     }
 }
