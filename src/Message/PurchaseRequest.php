@@ -34,7 +34,7 @@ class PurchaseRequest extends AbstractRequest
             'MerchantReference' => $this->getCombinedMerchantRef(),
             'MerchantReferenceFormat' => 1,
             'MerchantData' => $this->getTransactionId(),
-            // 'MerchantDateTime' => date('Y-m-d\TH:i:s'),
+            'MerchantDateTime' => date('Y-m-d\TH:i:s'),
             'MerchantHomePageURL' => $this->getCancelUrl(),
 
             'SuccessURL' => $this->getReturnUrl(),
@@ -43,7 +43,7 @@ class PurchaseRequest extends AbstractRequest
             'NotificationURL' => $this->getNotifyUrl(),
 
             'Timeout' => 900, // 15 minutes
-            // 'UserIPAddress' => $this->getClientIp(),
+            'UserIPAddress' => $this->getClientIp(),
         ];
     }
 
