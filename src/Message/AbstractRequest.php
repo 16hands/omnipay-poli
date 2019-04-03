@@ -11,7 +11,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     /**
      * @var string
      */
-    protected $testEndpoint = 'https://poliapi.uat1.paywithpoli.com';
+    protected $testEndpoint = 'https://poliapi.uat1.paywithpoli.com/api';
 
     /**
      * @var string
