@@ -77,6 +77,16 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
+     * Get the endpoint to use.
+     *
+     * @return string
+     */
+    protected function getEndpoint()
+    {
+        return parent::getEndpoint().'/Transaction/Initiate';
+    }
+
+    /**
      * Map a response into the appropriate class.
      *
      * @param array $data

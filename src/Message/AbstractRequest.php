@@ -6,122 +6,134 @@ use Omnipay\Common\Exception\InvalidResponseException;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
-	protected $endpoint = 'https://poliapi.apac.paywithpoli.com/api/v2/';
+    const API_VERSION = 'v2';
 
-	public function getMerchantCode()
-	{
-		return $this->getParameter('merchantCode');
-	}
+    /**
+     * @var string
+     */
+    protected $testEndpoint = 'https://poliapi.uat1.paywithpoli.com';
 
-	public function setMerchantCode($value)
-	{
-		return $this->setParameter('merchantCode', $value);
-	}
+    /**
+     * @var string
+     */
+    protected $liveEndpoint = 'https://poliapi.apac.paywithpoli.com/api';
 
-	public function getAuthenticationCode()
-	{
-		return $this->getParameter('authenticationCode');
-	}
+    public function getMerchantCode()
+    {
+        return $this->getParameter('merchantCode');
+    }
 
-	public function setAuthenticationCode($value)
-	{
-		return $this->setParameter('authenticationCode', $value);
-	}
+    public function setMerchantCode($value)
+    {
+        return $this->setParameter('merchantCode', $value);
+    }
 
-	/**
-	 * @return \Omnipay\Common\Message\ResponseInterface
-	 * @throws InvalidResponseException
-	 */
-	public function send()
-	{
-		return $this->sendData($this->getData());
-	}
+    public function getAuthenticationCode()
+    {
+        return $this->getParameter('authenticationCode');
+    }
 
-	/**
-	 * @param array $data
-	 * @return \Omnipay\Common\Message\ResponseInterface
-	 * @throws InvalidResponseException
-	 */
-	public function sendData($data)
-	{
-		// Remove the MerchantCode and AuthenticationCode, we use this separately in getBasicAuthorizationToken()
-		unset($data['MerchantCode'], $data['AuthenticationCode']);
+    public function setAuthenticationCode($value)
+    {
+        return $this->setParameter('authenticationCode', $value);
+    }
 
-		// Guzzle HTTP Client createRequest does funny things when a GET request
-		// has attached data, so don't send the data if the method is GET.
-		if ($this->getHttpMethod() === 'GET') {
-			$requestUrl = $this->getEndpoint().'?'.http_build_query($data);
-			$body = null;
-		} else {
-			$body = json_encode($data);
-			$requestUrl = $this->getEndpoint();
-		}
+    /**
+     * @return \Omnipay\Common\Message\ResponseInterface
+     * @throws InvalidResponseException
+     */
+    public function send()
+    {
+        return $this->sendData($this->getData());
+    }
 
-		try {
-			$httpResponse = $this->httpClient->request(
-				$this->getHttpMethod(),
-				$requestUrl,
-				[
-					'Accept' => 'application/json',
-					'Authorization' => 'Basic '.$this->getBasicAuthorizationToken(),
-					'Content-type' => 'application/json',
-				],
-				$body
-			);
+    /**
+     * @param array $data
+     * @return \Omnipay\Common\Message\ResponseInterface
+     * @throws InvalidResponseException
+     */
+    public function sendData($data)
+    {
+        // Remove the MerchantCode and AuthenticationCode, we use this separately in getBasicAuthorizationToken()
+        unset($data['MerchantCode'], $data['AuthenticationCode']);
 
-			// Empty response body should be parsed also as and empty array
-			$body = (string)$httpResponse->getBody()->getContents();
-			$jsonToArrayResponse = ! empty($body) ? json_decode($body, true) : [];
+        // Guzzle HTTP Client createRequest does funny things when a GET request
+        // has attached data, so don't send the data if the method is GET.
+        if ($this->getHttpMethod() === 'GET') {
+            $requestUrl = $this->getEndpoint().'?'.http_build_query($data);
+            $body = null;
+        } else {
+            $body = json_encode($data);
+            $requestUrl = $this->getEndpoint();
+        }
 
-			return $this->response = $this->createResponse($jsonToArrayResponse, $httpResponse->getStatusCode());
+        try {
+            $httpResponse = $this->httpClient->request(
+                $this->getHttpMethod(),
+                $requestUrl,
+                [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Basic '.$this->getBasicAuthorizationToken(),
+                    'Content-type' => 'application/json',
+                ],
+                $body
+            );
 
-		} catch (\Exception $e) {
-			throw new InvalidResponseException(
-				'Error communicating with payment gateway: '.$e->getMessage(),
-				$e->getCode()
-			);
-		}
-	}
+            // Empty response body should be parsed also as and empty array
+            $body = (string)$httpResponse->getBody()->getContents();
+            $jsonToArrayResponse = ! empty($body) ? json_decode($body, true) : [];
 
-	/**
-	 * Map a response into the appropriate class.
-	 *
-	 * @param array $data
-	 * @param $statusCode
-	 * @return \Omnipay\Common\Message\ResponseInterface
-	 */
-	abstract protected function createResponse($data, $statusCode);
+            return $this->response = $this->createResponse($jsonToArrayResponse, $httpResponse->getStatusCode());
 
-	/**
-	 * Get HTTP Method.
-	 *
-	 * @return string
-	 */
-	protected function getHttpMethod()
-	{
-		return 'POST';
-	}
+        } catch (\Exception $e) {
+            throw new InvalidResponseException(
+                'Error communicating with payment gateway: '.$e->getMessage(),
+                $e->getCode()
+            );
+        }
+    }
 
-	/**
-	 * Get the endpoint to use.
-	 *
-	 * @return string
-	 */
-	protected function getEndpoint()
-	{
-		return $this->endpoint;
-	}
+    /**
+     * Map a response into the appropriate class.
+     *
+     * @param array $data
+     * @param $statusCode
+     * @return \Omnipay\Common\Message\ResponseInterface
+     */
+    abstract protected function createResponse($data, $statusCode);
 
-	/**
-	 * Get the basic authorization token to use in the header.
-	 *
-	 * @return string
-	 */
-	protected function getBasicAuthorizationToken()
-	{
-		$merchantCode = $this->getMerchantCode();
-		$authenticationCode = $this->getAuthenticationCode();
+    /**
+     * Get HTTP Method.
+     *
+     * @return string
+     */
+    protected function getHttpMethod()
+    {
+        return 'POST';
+    }
 
-		return base64_encode($merchantCode.":".$authenticationCode);
-	}
+    /**
+     * Get the endpoint to use.
+     *
+     * @return string
+     */
+    protected function getEndpoint()
+    {
+        $base = $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
+
+        return $base.'/'.self::API_VERSION;
+    }
+
+    /**
+     * Get the basic authorization token to use in the header.
+     *
+     * @return string
+     */
+    protected function getBasicAuthorizationToken()
+    {
+        $merchantCode = $this->getMerchantCode();
+        $authenticationCode = $this->getAuthenticationCode();
+
+        return base64_encode($merchantCode.":".$authenticationCode);
+    }
 }

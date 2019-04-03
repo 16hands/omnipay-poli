@@ -26,7 +26,8 @@ class Gateway extends AbstractGateway
     {
         return [
             'merchantCode' => '',
-            'authenticationCode' => ''
+            'authenticationCode' => '',
+            'testMode' => false,
         ];
     }
 

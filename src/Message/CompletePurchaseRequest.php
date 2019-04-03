@@ -11,8 +11,6 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class CompletePurchaseRequest extends AbstractRequest
 {
-    protected $endpoint = 'https://poliapi.apac.paywithpoli.com/api/v2/Transaction/GetTransaction';
-
     /**
      * @return array
      * @throws InvalidRequestException
@@ -42,6 +40,16 @@ class CompletePurchaseRequest extends AbstractRequest
         return [
             'token' => $token
         ];
+    }
+
+    /**
+     * Get the endpoint to use.
+     *
+     * @return string
+     */
+    protected function getEndpoint()
+    {
+        return parent::getEndpoint().'/Transaction/GetTransaction';
     }
 
     /**
