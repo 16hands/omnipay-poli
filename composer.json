@@ -1,7 +1,7 @@
 {
-  "name": "bbe-io/omnipay-poli",
+  "name": "16hands/omnipay-poli",
   "type": "library",
-  "description": "POLi driver for the Omnipay payment processing library",
+  "description": "POLi driver for the Omnipay payment processing library for 16hands",
   "keywords": [
     "gateway",
     "merchant",
@@ -10,7 +10,7 @@
     "POLi",
     "payment"
   ],
-  "homepage": "https://github.com/bbe-io/omnipay-poli",
+  "homepage": "https://github.com/16hands/omnipay-poli",
   "license": "MIT",
   "authors": [
     {
@@ -26,6 +26,10 @@
     {
       "name": "James Grose",
       "homepage": "https://bbe.io"
+    },
+    {
+      "name": "Carl Bowden",
+      "homepage": "https://github.com/16hands"
     }
   ],
   "require": {
